@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>1701_HEURES</title>
+  <style>
+    /* Mode sombre compact et centré */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+
+    h1 {
+      font-size: 1.4em;
+      color: #ffffff;
+      text-align: center;
+      margin: 10px 0;
+    }
+
+    .main-container {
+      width: 90%;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* Sélection de la date */
+    .calendar-container {
+      width: 100%;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .calendar-container label {
+      font-size: 0.9em;
+      color: #bbbbbb;
+    }
+    .calendar-container input {
+      width: 100%;
+      padding: 6px;
+      margin-top: 5px;
+      background-color: #333;
+      color: #e0e0e0;
+      border: 1px solid #555;
+      border-radius: 4px;
+      text-align: center;
+      font-size: 0.9em;
+    }
+
+    /* Conteneur de chaque tâche, compact et centré */
+    .task-container {
+      width: 100%;
+      margin: 5px 0;
+      padding: 8px;
+      background-color: #1a1a1a;
+      border-radius: 4px;
+    }
+    /* Style pour les conteneurs requis en gris clair */
+    .required-task {
+      background-color: #3a3a3a;
+      color: #333;
+    }
+    .task-container h3 {
+      font-size: 1em;
+      margin: 4px 0;
+      color: #bbbbbb;
+      text-align: center;
+    }
+
+    /* Champs de saisie et boutons alignés en flex */
+    .flex-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* Boutons et champs de saisie en mode compact avec même largeur */
+    button, input[type="text"] {
+      width: 23%;
+      padding: 6px;
+      font-size: 0.85em;
+      color: #0c0c0c;
+      border-radius: 4px;
+      border: none;
+      text-align: center;
+      transition: background-color 0.3s ease;
+    }
+    button {
+      cursor: pointer;
+    }
+    /* Boutons "Début" et "Fin" avec fond bleu clair */
+    .time-button {
+      background-color: #87CEFA;
+    }
+    /* Bouton Zero avec fond rouge, même couleur que le bouton Effacer */
+    .zero-button {
+      background-color: #d9534f;
+    }
+    button:hover {
+      background-color: #565656;
+    }
+    .calculate-button { background-color: #1e90ff; }
+    .save-button { background-color: #4caf50; }
+    .clear-button { background-color: #d9534f; }
+
+    /* Conteneur de résultats compact */
+    .results-container {
+      width: 100%;
+      padding: 10px;
+      background-color: #3a3a3a;
+      border-radius: 4px;
+      margin-top: 10px;
+      text-align: center;
+    }
+    .results-container h3 {
+      font-size: 1.1em;
+      margin: 5px 0;
+      color: #3a3a3a;
+    }
+
+    /* Style des éléments de résultats */
+    .result-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.95em;
+      padding: 6px;
+      background-color: #2b2b2b;
+      border-radius: 4px;
+      margin: 3px 0;
+      color: #e0e0e0;
+    }
+    .result-item .result-text {
+      display: flex;
+      align-items: center;
+    }
+    .result-item .result-text i {
+      margin-right: 8px;
+    }
+    .result-item span {
+      font-weight: bold;
+      color: #80cbc4;
+    }
+
+    /* Style accentué pour Travail Total Payé */
+    .highlighted-result {
+      background-color: #00796b; /* Fond vert foncé */
+      color: #ffeb3b; /* Texte jaune vif */
+    }
+  </style>
+</head>
+<body>
+<div class="main-container">
+  <!-- Sélection du jour -->
+  <div class="calendar-container">
+    <label for="selectedDate">Date:</label>
+    <input type="date" id="selectedDate" onchange="loadDataForDate()">
+  </div>
+
+  <!-- Bureau matin -->
+  <div class="task-container">
+    <h3>Bureau matin</h3>
+    <div class="flex-container">
+      <button class="time-button" onclick="setCurrentTime('bureauMatinStartTime')">Début</button>
+      <input type="text" id="bureauMatinStartTime" placeholder="hh:mm">
+      <button class="time-button" onclick="setCurrentTime('bureauMatinStopTime')">Fin</button>
+      <input type="text" id="bureauMatinStopTime" placeholder="hh:mm">
+      <button class="zero-button" onclick="setZeroTime('bureauMatinStartTime', 'bureauMatinStopTime')">Zero</button>
+    </div>
+  </div>
+
+  <!-- Trajet matin -->
+  <div class="task-container required-task">
+    <h3>Premier Trajet matin (Requis)</h3>
+    <div class="flex-container">
+      <button class="time-button" onclick="setCurrentTime('trajetMatinStartTime')">Début</button>
+      <input type="text" id="trajetMatinStartTime" placeholder="hh:mm">
+      <button class="time-button" onclick="setCurrentTime('trajetMatinStopTime')">Fin</button>
+      <input type="text" id="trajetMatinStopTime" placeholder="hh:mm">
+      <button class="zero-button" onclick="setZeroTime('trajetMatinStartTime', 'trajetMatinStopTime')">Zero</button>
+    </div>
+  </div>
+
+  <!-- Pause midi -->
+  <div class="task-container">
+    <h3>Pause midi</h3>
+    <div class="flex-container">
+      <button class="time-button" onclick="setCurrentTime('pauseMidiStartTime')">Début</button>
+      <input type="text" id="pauseMidiStartTime" placeholder="hh:mm">
+      <button class="time-button" onclick="setCurrentTime('pauseMidiStopTime')">Fin</button>
+      <input type="text" id="pauseMidiStopTime" placeholder="hh:mm">
+      <button class="zero-button" onclick="setZeroTime('pauseMidiStartTime', 'pauseMidiStopTime')">Zero</button>
+    </div>
+  </div>
+
+  <!-- Trajet soir -->
+  <div class="task-container required-task">
+    <h3>Dernier Trajet soir (Requis)</h3>
+    <div class="flex-container">
+      <button class="time-button" onclick="setCurrentTime('trajetSoirStartTime')">Début</button>
+      <input type="text" id="trajetSoirStartTime" placeholder="hh:mm">
+      <button class="time-button" onclick="setCurrentTime('trajetSoirStopTime')">Fin</button>
+      <input type="text" id="trajetSoirStopTime" placeholder="hh:mm">
+      <button class="zero-button" onclick="setZeroTime('trajetSoirStartTime', 'trajetSoirStopTime')">Zero</button>
+    </div>
+  </div>
+
+  <!-- Bureau soir -->
+  <div class="task-container">
+    <h3>Bureau soir</h3>
+    <div class="flex-container">
+      <button class="time-button" onclick="setCurrentTime('bureauSoirStartTime')">Début</button>
+      <input type="text" id="bureauSoirStartTime" placeholder="hh:mm">
+      <button class="time-button" onclick="setCurrentTime('bureauSoirStopTime')">Fin</button>
+      <input type="text" id="bureauSoirStopTime" placeholder="hh:mm">
+      <button class="zero-button" onclick="setZeroTime('bureauSoirStartTime', 'bureauSoirStopTime')">Zero</button>
+    </div>
+  </div>
+
+  <!-- Conteneur de résultats -->
+  <div class="results-container" id="resultsContainer">
+    <button class="calculate-button" onclick="displayResults()">Calculer</button>
+    <button class="save-button" onclick="saveDataForDate()">Sauver</button>
+    <button class="clear-button" onclick="clearInputs()">Effacer</button>
+
+    <div class="result-item" id="resultTrajetMatin">
+      <div class="result-text"><i class="result-icon">🚗</i> Trajet matin:</div>
+      <span>-</span>
+    </div>
+    <div class="result-item" id="resultTrajetSoir">
+      <div class="result-text"><i class="result-icon">🚗</i> Trajet soir:</div>
+      <span>-</span>
+    </div>
+    <div class="result-item" id="resultTempsTravail">
+      <div class="result-text"><i class="result-icon">💼</i> Temps Travail:</div>
+      <span>-</span>
+    </div>
+
+    <!-- Travail Total Payé avec accentuation des couleurs -->
+    <div class="result-item highlighted-result" id="resultTravailTotalPaye">
+      <div class="result-text"><i class="result-icon">💰</i> Travail Total Retenu (-45'x2):</div>
+      <span>-</span>
+    </div>
+  </div>
+</div>
+
+<!-- Script JavaScript pour gérer le chronomètre, le stockage et la date -->
+<script>
+  function parseTimeToMinutes(time) {
+    if (!time) return 0;
+    const [hours, minutes] = time.split(":").map(Number);
+    return hours * 60 + minutes;
+  }
+
+  function calculateElapsed(start, stop) {
+    const startMinutes = parseTimeToMinutes(start);
+    const stopMinutes = parseTimeToMinutes(stop);
+    return stopMinutes >= startMinutes ? stopMinutes - startMinutes : stopMinutes - startMinutes + 1440;
+  }
+
+  function adjustTrajetTime(time) {
+    return time > 45 ? time - 45 : 0;
+  }
+
+  function displayResults() {
+    const trajetMatin = calculateElapsed(
+      document.getElementById("trajetMatinStartTime").value,
+      document.getElementById("trajetMatinStopTime").value
+    );
+    const trajetSoir = calculateElapsed(
+      document.getElementById("trajetSoirStartTime").value,
+      document.getElementById("trajetSoirStopTime").value
+    );
+    const bureauMatin = calculateElapsed(
+      document.getElementById("bureauMatinStartTime").value,
+      document.getElementById("bureauMatinStopTime").value
+    );
+    const bureauSoir = calculateElapsed(
+      document.getElementById("bureauSoirStartTime").value,
+      document.getElementById("bureauSoirStopTime").value
+    );
+    const pauseMidi = calculateElapsed(
+      document.getElementById("pauseMidiStartTime").value,
+      document.getElementById("pauseMidiStopTime").value
+    );
+
+    const travailTotal = calculateElapsed(
+      document.getElementById("trajetMatinStopTime").value,
+      document.getElementById("trajetSoirStartTime").value
+    ) + bureauMatin + bureauSoir - pauseMidi;
+
+    // Ajustement des trajets
+    const trajetMatinAjuste = adjustTrajetTime(trajetMatin);
+    const trajetSoirAjuste = adjustTrajetTime(trajetSoir);
+
+    // Calcul du Travail Total Payé
+    const travailTotalPaye = travailTotal + trajetMatinAjuste + trajetSoirAjuste;
+
+    document.getElementById("resultTrajetMatin").querySelector("span").textContent = `${Math.floor(trajetMatin / 60)}h${trajetMatin % 60}m`;
+    document.getElementById("resultTrajetSoir").querySelector("span").textContent = `${Math.floor(trajetSoir / 60)}h${trajetSoir % 60}m`;
+    document.getElementById("resultTempsTravail").querySelector("span").textContent = `${Math.floor(travailTotal / 60)}h${travailTotal % 60}m`;
+    document.getElementById("resultTravailTotalPaye").querySelector("span").textContent = `${Math.floor(travailTotalPaye / 60)}h${travailTotalPaye % 60}m`;
+  }
+
+  function setCurrentTime(inputId) {
+    const now = new Date();
+    const formattedTime = now.toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+    document.getElementById(inputId).value = formattedTime;
+  }
+
+  function clearInputs() {
+    document.querySelectorAll("input[type='text']").forEach(input => input.value = "");
+    document.querySelectorAll(".result-item span").forEach(span => span.textContent = "-");
+    document.getElementById("resultTravailTotalPaye").querySelector("span").textContent = "-";
+  }
+
+  function setZeroTime(startId, endId) {
+    document.getElementById(startId).value = "00:00";
+    document.getElementById(endId).value = "00:00";
+  }
+
+  function saveDataForDate() {
+    const selectedDate = document.getElementById("selectedDate").value;
+    if (!selectedDate) {
+      alert("Veuillez sélectionner une date pour sauvegarder les données.");
+      return;
+    }
+
+    const data = {
+      bureauMatinStart: document.getElementById("bureauMatinStartTime").value,
+      bureauMatinStop: document.getElementById("bureauMatinStopTime").value,
+      trajetMatinStart: document.getElementById("trajetMatinStartTime").value,
+      trajetMatinStop: document.getElementById("trajetMatinStopTime").value,
+      pauseMidiStart: document.getElementById("pauseMidiStartTime").value,
+      pauseMidiStop: document.getElementById("pauseMidiStopTime").value,
+      trajetSoirStart: document.getElementById("trajetSoirStartTime").value,
+      trajetSoirStop: document.getElementById("trajetSoirStopTime").value,
+      bureauSoirStart: document.getElementById("bureauSoirStartTime").value,
+      bureauSoirStop: document.getElementById("bureauSoirStopTime").value,
+      resultTrajetMatin: document.getElementById("resultTrajetMatin").querySelector("span").textContent,
+      resultTrajetSoir: document.getElementById("resultTrajetSoir").querySelector("span").textContent,
+      resultTempsTravail: document.getElementById("resultTempsTravail").querySelector("span").textContent,
+      resultTravailTotalPaye: document.getElementById("resultTravailTotalPaye").querySelector("span").textContent
+    };
+
+    localStorage.setItem(`data-${selectedDate}`, JSON.stringify(data));
+    alert("Données sauvegardées pour la date sélectionnée.");
+  }
+
+  function loadDataForDate() {
+    const selectedDate = document.getElementById("selectedDate").value;
+    if (!selectedDate) return;
+
+    const data = JSON.parse(localStorage.getItem(`data-${selectedDate}`));
+    if (data) {
+      document.getElementById("bureauMatinStartTime").value = data.bureauMatinStart || "";
+      document.getElementById("bureauMatinStopTime").value = data.bureauMatinStop || "";
+      document.getElementById("trajetMatinStartTime").value = data.trajetMatinStart || "";
+      document.getElementById("trajetMatinStopTime").value = data.trajetMatinStop || "";
+      document.getElementById("pauseMidiStartTime").value = data.pauseMidiStart || "";
+      document.getElementById("pauseMidiStopTime").value = data.pauseMidiStop || "";
+      document.getElementById("trajetSoirStartTime").value = data.trajetSoirStart || "";
+      document.getElementById("trajetSoirStopTime").value = data.trajetSoirStop || "";
+      document.getElementById("bureauSoirStartTime").value = data.bureauSoirStart || "";
+      document.getElementById("bureauSoirStopTime").value = data.bureauSoirStop || "";
+      document.getElementById("resultTrajetMatin").querySelector("span").textContent = data.resultTrajetMatin || "-";
+      document.getElementById("resultTrajetSoir").querySelector("span").textContent = data.resultTrajetSoir || "-";
+      document.getElementById("resultTempsTravail").querySelector("span").textContent = data.resultTempsTravail || "-";
+      document.getElementById("resultTravailTotalPaye").querySelector("span").textContent = data.resultTravailTotalPaye || "-";
+    } else {
+      clearInputs();
+    }
+  }
+</script>
+</body>
+</html>
