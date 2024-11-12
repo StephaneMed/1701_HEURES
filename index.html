@@ -297,7 +297,7 @@
 
     document.getElementById("resultTrajetMatin").querySelector("span").textContent = `${Math.floor(trajetMatin / 60)}h${trajetMatin % 60}m`;
     document.getElementById("resultTrajetSoir").querySelector("span").textContent = `${Math.floor(trajetSoir / 60)}h${trajetSoir % 60}m`;
-    document.getElementById("resultTempsTravail").querySelector("span").textContent = `${Math.floor(travailTotal / 60)}h${travailTotal % 60}m`;
+    document.getElementById("resultTempsTravail").querySelector("span").textContent = `${Math.floor((calculateElapsed(document.getElementById("trajetMatinStopTime").value, document.getElementById("trajetSoirStartTime").value) + bureauMatin + bureauSoir - pauseMidi) / 60)}h${(calculateElapsed(document.getElementById("trajetMatinStopTime").value, document.getElementById("trajetSoirStartTime").value) + bureauMatin + bureauSoir - pauseMidi) % 60}m`;
     document.getElementById("resultTravailTotalPaye").querySelector("span").textContent = `${Math.floor(travailTotal / 60)}h${travailTotal % 60}m`;
 }
   function setCurrentTime(inputId) {
