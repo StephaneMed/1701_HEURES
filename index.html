@@ -161,7 +161,7 @@
 <div class="main-container">
   <!-- Sélection du jour -->
   <div class="calendar-container">
-    <label for="selectedDate"></label>
+    <label for="selectedDate">DATE DU JOUR:</label>
     <input type="date" id="selectedDate" onchange="loadDataForDate()">
   </div>
 
@@ -245,128 +245,127 @@
     </div>
   </div>
 
-<!-- Script JavaScript pour gérer le chronomètre, le stockage et la date -->
-<script>
-  function parseTimeToMinutes(time) {
-    if (!time) return 0;
-    const [hours, minutes] = time.split(":").map(Number);
-    return hours * 60 + minutes;
-  }
-
-  function calculateElapsed(start, stop) {
-    const startMinutes = parseTimeToMinutes(start);
-    const stopMinutes = parseTimeToMinutes(stop);
-    return stopMinutes >= startMinutes ? stopMinutes - startMinutes : stopMinutes - startMinutes + 1440;
-  }
-
-  function displayResults() {
-    const trajetMatin = calculateElapsed(
-      document.getElementById("trajetMatinStartTime").value,
-      document.getElementById("trajetMatinStopTime").value
-    );
-    const trajetSoir = calculateElapsed(
-      document.getElementById("trajetSoirStartTime").value,
-      document.getElementById("trajetSoirStopTime").value
-    );
-    const bureauMatin = calculateElapsed(
-      document.getElementById("bureauMatinStartTime").value,
-      document.getElementById("bureauMatinStopTime").value
-    );
-    const bureauSoir = calculateElapsed(
-      document.getElementById("bureauSoirStartTime").value,
-      document.getElementById("bureauSoirStopTime").value
-    );
-    const pauseMidi = calculateElapsed(
-      document.getElementById("pauseMidiStartTime").value,
-      document.getElementById("pauseMidiStopTime").value
-    );
-
-    // Calcul de l'écart entre la fin du trajet matin et le début du trajet soir
-    const intervalTrajetMatinSoir = calculateElapsed(
-      document.getElementById("trajetMatinStopTime").value,
-      document.getElementById("trajetSoirStartTime").value
-    );
-
-    // Calcul du Temps de Travail
-    const travailTotal = bureauMatin + bureauSoir - pauseMidi + intervalTrajetMatinSoir;
-
-    // Mise à jour de l'affichage des résultats
-    document.getElementById("resultTrajetMatin").querySelector("span").textContent = `${Math.floor(trajetMatin / 60)}h${trajetMatin % 60}m`;
-    document.getElementById("resultTrajetSoir").querySelector("span").textContent = `${Math.floor(trajetSoir / 60)}h${trajetSoir % 60}m`;
-    document.getElementById("resultTempsTravail").querySelector("span").textContent = `${Math.floor(travailTotal / 60)}h${travailTotal % 60}m`;
-  }
-
-  function setCurrentTime(inputId) {
-    const now = new Date();
-    const formattedTime = now.toLocaleTimeString("fr-FR", {
-      hour: "2-digit",
-      minute: "2-digit"
-    });
-    document.getElementById(inputId).value = formattedTime;
-  }
-
-  function clearInputs() {
-    document.querySelectorAll("input[type='text']").forEach(input => input.value = "");
-    document.querySelectorAll(".result-item span").forEach(span => span.textContent = "-");
-  }
-
-  function setZeroTime(startId, endId) {
-    document.getElementById(startId).value = "00:00";
-    document.getElementById(endId).value = "00:00";
-  }
-
-  function saveDataForDate() {
-    const selectedDate = document.getElementById("selectedDate").value;
-    if (!selectedDate) {
-      alert("Veuillez sélectionner une date pour sauvegarder les données.");
-      return;
+  <!-- Script JavaScript pour gérer le chronomètre, le stockage et la date -->
+  <script>
+    function parseTimeToMinutes(time) {
+      if (!time) return 0;
+      const [hours, minutes] = time.split(":").map(Number);
+      return hours * 60 + minutes;
     }
 
-    const data = {
-      bureauMatinStart: document.getElementById("bureauMatinStartTime").value,
-      bureauMatinStop: document.getElementById("bureauMatinStopTime").value,
-      trajetMatinStart: document.getElementById("trajetMatinStartTime").value,
-      trajetMatinStop: document.getElementById("trajetMatinStopTime").value,
-      pauseMidiStart: document.getElementById("pauseMidiStartTime").value,
-      pauseMidiStop: document.getElementById("pauseMidiStopTime").value,
-      trajetSoirStart: document.getElementById("trajetSoirStartTime").value,
-      trajetSoirStop: document.getElementById("trajetSoirStopTime").value,
-      bureauSoirStart: document.getElementById("bureauSoirStartTime").value,
-      bureauSoirStop: document.getElementById("bureauSoirStopTime").value,
-      resultTrajetMatin: document.getElementById("resultTrajetMatin").querySelector("span").textContent,
-      resultTrajetSoir: document.getElementById("resultTrajetSoir").querySelector("span").textContent,
-      resultTempsTravail: document.getElementById("resultTempsTravail").querySelector("span").textContent,
-    };
-
-    localStorage.setItem(`data-${selectedDate}`, JSON.stringify(data));
-    alert("Données sauvegardées pour la date sélectionnée.");
-  }
-
-  function loadDataForDate() {
-    const selectedDate = document.getElementById("selectedDate").value;
-    if (!selectedDate) return;
-
-    const data = JSON.parse(localStorage.getItem(`data-${selectedDate}`));
-    if (data) {
-      document.getElementById("bureauMatinStartTime").value = data.bureauMatinStart || "";
-      document.getElementById("bureauMatinStopTime").value = data.bureauMatinStop || "";
-      document.getElementById("trajetMatinStartTime").value = data.trajetMatinStart || "";
-      document.getElementById("trajetMatinStopTime").value = data.trajetMatinStop || "";
-      document.getElementById("pauseMidiStartTime").value = data.pauseMidiStart || "";
-      document.getElementById("pauseMidiStopTime").value = data.pauseMidiStop || "";
-      document.getElementById("trajetSoirStartTime").value = data.trajetSoirStart || "";
-      document.getElementById("trajetSoirStopTime").value = data.trajetSoirStop || "";
-      document.getElementById("bureauSoirStartTime").value = data.bureauSoirStart || "";
-      document.getElementById("bureauSoirStopTime").value = data.bureauSoirStop || "";
-      document.getElementById("resultTrajetMatin").querySelector("span").textContent = data.resultTrajetMatin || "-";
-      document.getElementById("resultTrajetSoir").querySelector("span").textContent = data.resultTrajetSoir || "-";
-      document.getElementById("resultTempsTravail").querySelector("span").textContent = data.resultTempsTravail || "-";
-    } else {
-      clearInputs();
+    function calculateElapsed(start, stop) {
+      const startMinutes = parseTimeToMinutes(start);
+      const stopMinutes = parseTimeToMinutes(stop);
+      return stopMinutes >= startMinutes ? stopMinutes - startMinutes : stopMinutes - startMinutes + 1440;
     }
-  }
-</script>
-<div class="privacy-link" style="margin-top: 20px; font-size: 0.8em; text-align: center;">
-    <a href="https://stephanemed.github.io/PoliConf/" style="color: #bbbbbb; text-decoration: none;">Politique de Confidentialit&eacute;</a>
-  </div>
+
+    function displayResults() {
+      const trajetMatin = calculateElapsed(
+        document.getElementById("trajetMatinStartTime").value,
+        document.getElementById("trajetMatinStopTime").value
+      );
+      const trajetSoir = calculateElapsed(
+        document.getElementById("trajetSoirStartTime").value,
+        document.getElementById("trajetSoirStopTime").value
+      );
+      const bureauMatin = calculateElapsed(
+        document.getElementById("bureauMatinStartTime").value,
+        document.getElementById("bureauMatinStopTime").value
+      );
+      const bureauSoir = calculateElapsed(
+        document.getElementById("bureauSoirStartTime").value,
+        document.getElementById("bureauSoirStopTime").value
+      );
+      const pauseMidi = calculateElapsed(
+        document.getElementById("pauseMidiStartTime").value,
+        document.getElementById("pauseMidiStopTime").value
+      );
+
+      // Calcul de l'écart entre la fin du trajet matin et le début du trajet soir
+      const intervalTrajetMatinSoir = calculateElapsed(
+        document.getElementById("trajetMatinStopTime").value,
+        document.getElementById("trajetSoirStartTime").value
+      );
+
+      // Calcul du Temps de Travail
+      const travailTotal = bureauMatin + bureauSoir - pauseMidi + intervalTrajetMatinSoir;
+
+      // Mise à jour de l'affichage des résultats
+      document.getElementById("resultTrajetMatin").querySelector("span").textContent = `${Math.floor(trajetMatin / 60)}h${trajetMatin % 60}m`;
+      document.getElementById("resultTrajetSoir").querySelector("span").textContent = `${Math.floor(trajetSoir / 60)}h${trajetSoir % 60}m`;
+      document.getElementById("resultTempsTravail").querySelector("span").textContent = `${Math.floor(travailTotal / 60)}h${travailTotal % 60}m`;
+    }
+
+    function setCurrentTime(inputId) {
+      const now = new Date();
+      const formattedTime = now.toLocaleTimeString("fr-FR", {
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+      document.getElementById(inputId).value = formattedTime;
+    }
+
+    function clearInputs() {
+      document.querySelectorAll("input[type='text']").forEach(input => input.value = "");
+      document.querySelectorAll(".result-item span").forEach(span => span.textContent = "-");
+    }
+
+    function setZeroTime(startId, endId) {
+      document.getElementById(startId).value = "00:00";
+      document.getElementById(endId).value = "00:00";
+    }
+
+    function saveDataForDate() {
+      const selectedDate = document.getElementById("selectedDate").value;
+      if (!selectedDate) {
+        alert("Veuillez sélectionner une date pour sauvegarder les données.");
+        return;
+      }
+
+      const data = {
+        bureauMatinStart: document.getElementById("bureauMatinStartTime").value,
+        bureauMatinStop: document.getElementById("bureauMatinStopTime").value,
+        trajetMatinStart: document.getElementById("trajetMatinStartTime").value,
+        trajetMatinStop: document.getElementById("trajetMatinStopTime").value,
+        pauseMidiStart: document.getElementById("pauseMidiStartTime").value,
+        pauseMidiStop: document.getElementById("pauseMidiStopTime").value,
+        trajetSoirStart: document.getElementById("trajetSoirStartTime").value,
+        trajetSoirStop: document.getElementById("trajetSoirStopTime").value,
+        bureauSoirStart: document.getElementById("bureauSoirStartTime").value,
+        bureauSoirStop: document.getElementById("bureauSoirStopTime").value,
+        resultTrajetMatin: document.getElementById("resultTrajetMatin").querySelector("span").textContent,
+        resultTrajetSoir: document.getElementById("resultTrajetSoir").querySelector("span").textContent,
+        resultTempsTravail: document.getElementById("resultTempsTravail").querySelector("span").textContent,
+      };
+
+      localStorage.setItem(`data-${selectedDate}`, JSON.stringify(data));
+      alert("Données sauvegardées pour la date sélectionnée.");
+    }
+
+    function loadDataForDate() {
+      const selectedDate = document.getElementById("selectedDate").value;
+      if (!selectedDate) return;
+
+      const data = JSON.parse(localStorage.getItem(`data-${selectedDate}`));
+      if (data) {
+        document.getElementById("bureauMatinStartTime").value = data.bureauMatinStart || "";
+        document.getElementById("bureauMatinStopTime").value = data.bureauMatinStop || "";
+        document.getElementById("trajetMatinStartTime").value = data.trajetMatinStart || "";
+        document.getElementById("trajetMatinStopTime").value = data.trajetMatinStop || "";
+        document.getElementById("pauseMidiStartTime").value = data.pauseMidiStart || "";
+        document.getElementById("pauseMidiStopTime").value = data.pauseMidiStop || "";
+        document.getElementById("trajetSoirStartTime").value = data.trajetSoirStart || "";
+        document.getElementById("trajetSoirStopTime").value = data.trajetSoirStop || "";
+        document.getElementById("bureauSoirStartTime").value = data.bureauSoirStart || "";
+        document.getElementById("bureauSoirStopTime").value = data.bureauSoirStop || "";
+        document.getElementById("resultTrajetMatin").querySelector("span").textContent = data.resultTrajetMatin || "-";
+        document.getElementById("resultTrajetSoir").querySelector("span").textContent = data.resultTrajetSoir || "-";
+        document.getElementById("resultTempsTravail").querySelector("span").textContent = data.resultTempsTravail || "-";
+      } else {
+        clearInputs();
+      }
+    }
+  </script>
+</div>
+</body>
 </html>
