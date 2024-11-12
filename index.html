@@ -266,10 +266,6 @@
     return stopMinutes >= startMinutes ? stopMinutes - startMinutes : stopMinutes - startMinutes + 1440;
   }
 
-  function adjustTrajetTime(time) {
-    return time > 45 ? time - 45 : 0;
-  }
-
   function displayResults() {
     const trajetMatin = calculateElapsed(
       document.getElementById("trajetMatinStartTime").value,
@@ -292,24 +288,18 @@
       document.getElementById("pauseMidiStopTime").value
     );
 
-    const travailTotal = calculateElapsed(
-      document.getElementById("trajetMatinStopTime").value,
-      document.getElementById("trajetSoirStartTime").value
-    ) + bureauMatin + bureauSoir - pauseMidi;
+    const trajetTotal = trajetMatin + trajetSoir;
+    let travailTotal;
 
-    // Ajustement des trajets
-    const trajetMatinAjuste = adjustTrajetTime(trajetMatin);
-    const trajetSoirAjuste = adjustTrajetTime(trajetSoir);
-
-    // Calcul du Travail Total Payé
-    const travailTotalPaye = travailTotal + trajetMatinAjuste + trajetSoirAjuste;
+    if (trajetTotal > 90) { travailTotal = bureauMatin + trajetMatin + bureauSoir + trajetSoir - pauseMidi - 90 + calculateElapsed(document.getElementById("trajetMatinStopTime").value, document.getElementById("trajetSoirStartTime").value);
+    } else { travailTotal = bureauMatin + bureauSoir - pauseMidi + calculateElapsed(document.getElementById("trajetMatinStopTime").value, document.getElementById("trajetSoirStartTime").value);
+    }
 
     document.getElementById("resultTrajetMatin").querySelector("span").textContent = `${Math.floor(trajetMatin / 60)}h${trajetMatin % 60}m`;
     document.getElementById("resultTrajetSoir").querySelector("span").textContent = `${Math.floor(trajetSoir / 60)}h${trajetSoir % 60}m`;
     document.getElementById("resultTempsTravail").querySelector("span").textContent = `${Math.floor(travailTotal / 60)}h${travailTotal % 60}m`;
-    document.getElementById("resultTravailTotalPaye").querySelector("span").textContent = `${Math.floor(travailTotalPaye / 60)}h${travailTotalPaye % 60}m`;
-  }
-
+    document.getElementById("resultTravailTotalPaye").querySelector("span").textContent = `${Math.floor(travailTotal / 60)}h${travailTotal % 60}m`;
+}
   function setCurrentTime(inputId) {
     const now = new Date();
     const formattedTime = now.toLocaleTimeString("fr-FR", {
