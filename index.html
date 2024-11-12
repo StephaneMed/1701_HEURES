@@ -281,18 +281,21 @@
       document.getElementById("pauseMidiStopTime").value
     );
 
-    const trajetTotal = trajetMatin + trajetSoir;
-    let travailTotal;
+    // Calcul de l'écart entre la fin du trajet matin et le début du trajet soir
+    const intervalTrajetMatinSoir = calculateElapsed(
+      document.getElementById("trajetMatinStopTime").value,
+      document.getElementById("trajetSoirStartTime").value
+    );
 
-    if (trajetTotal > 90) { travailTotal = bureauMatin + trajetMatin + bureauSoir + trajetSoir - pauseMidi - 90 + calculateElapsed(document.getElementById("trajetMatinStopTime").value, document.getElementById("trajetSoirStartTime").value);
-    } else { travailTotal = bureauMatin + bureauSoir - pauseMidi + calculateElapsed(document.getElementById("trajetMatinStopTime").value, document.getElementById("trajetSoirStartTime").value);
-    }
+    // Calcul du Temps de Travail
+    const travailTotal = bureauMatin + bureauSoir - pauseMidi + intervalTrajetMatinSoir;
 
+    // Mise à jour de l'affichage des résultats
     document.getElementById("resultTrajetMatin").querySelector("span").textContent = `${Math.floor(trajetMatin / 60)}h${trajetMatin % 60}m`;
     document.getElementById("resultTrajetSoir").querySelector("span").textContent = `${Math.floor(trajetSoir / 60)}h${trajetSoir % 60}m`;
-    document.getElementById("resultTempsTravail").querySelector("span").textContent = `${Math.floor((calculateElapsed(document.getElementById("trajetMatinStopTime").value, document.getElementById("trajetSoirStartTime").value) + bureauMatin + bureauSoir - pauseMidi) / 60)}h${(calculateElapsed(document.getElementById("trajetMatinStopTime").value, document.getElementById("trajetSoirStartTime").value) + bureauMatin + bureauSoir - pauseMidi) % 60}m`;
-    
-}
+    document.getElementById("resultTempsTravail").querySelector("span").textContent = `${Math.floor(travailTotal / 60)}h${travailTotal % 60}m`;
+  }
+
   function setCurrentTime(inputId) {
     const now = new Date();
     const formattedTime = now.toLocaleTimeString("fr-FR", {
@@ -333,7 +336,6 @@
       resultTrajetMatin: document.getElementById("resultTrajetMatin").querySelector("span").textContent,
       resultTrajetSoir: document.getElementById("resultTrajetSoir").querySelector("span").textContent,
       resultTempsTravail: document.getElementById("resultTempsTravail").querySelector("span").textContent,
-      
     };
 
     localStorage.setItem(`data-${selectedDate}`, JSON.stringify(data));
@@ -359,7 +361,6 @@
       document.getElementById("resultTrajetMatin").querySelector("span").textContent = data.resultTrajetMatin || "-";
       document.getElementById("resultTrajetSoir").querySelector("span").textContent = data.resultTrajetSoir || "-";
       document.getElementById("resultTempsTravail").querySelector("span").textContent = data.resultTempsTravail || "-";
-      
     } else {
       clearInputs();
     }
