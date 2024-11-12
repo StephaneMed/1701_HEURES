@@ -243,14 +243,7 @@
       <div class="result-text"><i class="result-icon">💼</i> Temps Travail (A Saisir dans ADP):</div>
       <span>-</span>
     </div>
-
-    <!-- Travail Total Payé avec accentuation des couleurs -->
-    <div class="result-item highlighted-result" id="resultTravailTotalPaye">
-      <div class="result-text"><i class="result-icon">💰</i> Travail Total Retenu (Affiché dans ADP):</div>
-      <span>-</span>
-    </div>
   </div>
-</div>
 
 <!-- Script JavaScript pour gérer le chronomètre, le stockage et la date -->
 <script>
@@ -298,7 +291,7 @@
     document.getElementById("resultTrajetMatin").querySelector("span").textContent = `${Math.floor(trajetMatin / 60)}h${trajetMatin % 60}m`;
     document.getElementById("resultTrajetSoir").querySelector("span").textContent = `${Math.floor(trajetSoir / 60)}h${trajetSoir % 60}m`;
     document.getElementById("resultTempsTravail").querySelector("span").textContent = `${Math.floor((calculateElapsed(document.getElementById("trajetMatinStopTime").value, document.getElementById("trajetSoirStartTime").value) + bureauMatin + bureauSoir - pauseMidi) / 60)}h${(calculateElapsed(document.getElementById("trajetMatinStopTime").value, document.getElementById("trajetSoirStartTime").value) + bureauMatin + bureauSoir - pauseMidi) % 60}m`;
-    document.getElementById("resultTravailTotalPaye").querySelector("span").textContent = `${Math.floor(travailTotal / 60)}h${travailTotal % 60}m`;
+    
 }
   function setCurrentTime(inputId) {
     const now = new Date();
@@ -312,7 +305,6 @@
   function clearInputs() {
     document.querySelectorAll("input[type='text']").forEach(input => input.value = "");
     document.querySelectorAll(".result-item span").forEach(span => span.textContent = "-");
-    document.getElementById("resultTravailTotalPaye").querySelector("span").textContent = "-";
   }
 
   function setZeroTime(startId, endId) {
@@ -341,7 +333,7 @@
       resultTrajetMatin: document.getElementById("resultTrajetMatin").querySelector("span").textContent,
       resultTrajetSoir: document.getElementById("resultTrajetSoir").querySelector("span").textContent,
       resultTempsTravail: document.getElementById("resultTempsTravail").querySelector("span").textContent,
-      resultTravailTotalPaye: document.getElementById("resultTravailTotalPaye").querySelector("span").textContent
+      
     };
 
     localStorage.setItem(`data-${selectedDate}`, JSON.stringify(data));
@@ -367,7 +359,7 @@
       document.getElementById("resultTrajetMatin").querySelector("span").textContent = data.resultTrajetMatin || "-";
       document.getElementById("resultTrajetSoir").querySelector("span").textContent = data.resultTrajetSoir || "-";
       document.getElementById("resultTempsTravail").querySelector("span").textContent = data.resultTempsTravail || "-";
-      document.getElementById("resultTravailTotalPaye").querySelector("span").textContent = data.resultTravailTotalPaye || "-";
+      
     } else {
       clearInputs();
     }
