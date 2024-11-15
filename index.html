@@ -110,6 +110,7 @@
     .calculate-button { background-color: #1e90ff; }
     .save-button { background-color: #4caf50; }
     .clear-button { background-color: #d9534f; }
+    .export-button { background-color: #ffa500; }
 
     /* Conteneur de résultats compact */
     .results-container {
@@ -156,6 +157,7 @@
       color: #ffeb3b; /* Texte jaune vif */
     }
   </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
 </head>
 <body>
 <div class="main-container">
@@ -230,6 +232,7 @@
     <button class="calculate-button" onclick="displayResults()">Calculer</button>
     <button class="save-button" onclick="saveDataForDate()">Sauver</button>
     <button class="clear-button" onclick="clearInputs()">Effacer</button>
+    <button class="export-button" onclick="exportToExcel()">Exporter</button>
 
     <div class="result-item" id="resultTrajetMatin">
       <div class="result-text"><i class="result-icon">🚗</i> Trajet matin (A Saisir dans ADP):</div>
@@ -365,6 +368,25 @@
         clearInputs();
       }
     }
+
+    function exportToExcel() {
+    const data = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key.startsWith("data-")) {
+        const record = JSON.parse(localStorage.getItem(key));
+        data.push({ Date: key.replace("data-", ""), ...record });
+      }
+    }
+    if (!data.length) {
+      alert("Aucune donnée disponible pour l'exportation.");
+      return;
+    }
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.json_to_sheet(data);
+    XLSX.utils.book_append_sheet(wb, ws, "Données");
+    XLSX.writeFile(wb, "heures_travail.xlsx");
+  }
   </script>
 </div>
 </body>
