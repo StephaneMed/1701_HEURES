@@ -2,8 +2,9 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0.8">
   <title>1701_HEURES</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
   <style>
     /* Mode sombre compact et centré */
     body {
@@ -13,15 +14,16 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      background-color: #121212;
+      background-color: #121212; /* Fond sombre uniforme */
       color: #e0e0e0;
     }
 
     h1 {
-      font-size: 1.4em;
+      font-size: 1.6em;
       color: #ffffff;
       text-align: center;
-      margin: 10px 0;
+      margin: 1px 0;
+      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
     }
 
     .main-container {
@@ -30,127 +32,153 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      background-color: #1c1c1c; /* Fond légèrement plus clair */
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     }
 
-    /* Sélection de la date */
+/* Sélection de la date */
     .calendar-container {
       width: 100%;
-      margin-bottom: 12px;
-      text-align: center;
+      display: flex; /*  Permet d'aligner le texte et le sélecteur  */
+      align-items: center; /*  Aligne verticalement les éléments  */
+      margin: 8px 0;
+      padding: 10px;
+      background-color: #2b2b2b;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
     }
-    .calendar-container label {
-      font-size: 0.9em;
-      color: #bbbbbb;
+    .calendar-container h3 {
+      font-size: 1.2em;
+      color: #ffffff;
+      text-transform: uppercase;
+      border-bottom: 2px solid #87CEFA;
+      padding-bottom: 6px;
+      margin: 0; /*  Supprime les marges par défaut  */
+      margin-right: 10px; /*  Ajoute une marge à droite  */
     }
     .calendar-container input {
-      width: 100%;
-      padding: 6px;
-      margin-top: 5px;
+      width: auto; /*  Le sélecteur prend la largeur nécessaire  */
+      padding: 8px;
       background-color: #333;
       color: #e0e0e0;
       border: 1px solid #555;
-      border-radius: 4px;
-      text-align: center;
-      font-size: 0.9em;
+      border-radius: 5px;
+      font-size: 1em;
+      transition: border-color 0.3s ease;
+    }
+    .calendar-container input:focus {
+      border-color: #87CEFA;
+      outline: none;
     }
 
-    /* Conteneur de chaque tâche, compact et centré */
+    /* Conteneur de chaque tâche */
     .task-container {
       width: 100%;
-      margin: 5px 0;
-      padding: 8px;
-      background-color: #1a1a1a;
-      border-radius: 4px;
+      margin: 2px 0;
+      padding: 10px;
+      background-color: #2b2b2b;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
     }
-    /* Style pour les conteneurs requis en gris clair */
     .required-task {
-      background-color: #3a3a3a;
-      color: #333;
+      background-color: #3a3a3a; /* Fond pour les tâches requises */
     }
     .task-container h3 {
-      font-size: 1em;
-      margin: 4px 0;
-      color: #bbbbbb;
+      font-size: 1.2em;
+      margin-top: 4px; /*  Marge supérieure réduite  */
+      margin-bottom: 4px;
+      color: #ffffff;
       text-align: center;
+      text-transform: uppercase;
+      border-bottom: 2px solid #87CEFA;
+      padding-bottom: 3px;
     }
 
-    /* Champs de saisie et boutons alignés en flex */
+    /* Champs de saisie et boutons alignés */
     .flex-container {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
     }
 
-    /* Boutons et champs de saisie en mode compact avec même largeur */
     button, input[type="text"] {
-      width: 23%;
-      padding: 6px;
-      font-size: 0.85em;
+      width: 30%;
+      padding: 8px;
+      font-size: 1em;
       color: #0c0c0c;
-      border-radius: 4px;
+      border-radius: 6px;
       border: none;
       text-align: center;
-      transition: background-color 0.3s ease;
+      transition: transform 0.2s, background-color 0.3s ease;
+    }
+    input[type="text"] {
+      background-color: #333;
+      color: #e0e0e0;
+      border: 1px solid #555;
+    }
+    input[type="text"]:focus {
+      border-color: #87CEFA;
+      outline: none;
     }
     button {
       cursor: pointer;
-    }
-    /* Boutons "Début" et "Fin" avec fond bleu clair */
-    .time-button {
-      background-color: #87CEFA;
-    }
-    /* Bouton Zero avec fond rouge, même couleur que le bouton Effacer */
-    .zero-button {
-      background-color: #d9534f;
+      font-weight: bold;
+      color: #ffffff;
     }
     button:hover {
-      background-color: #565656;
+      transform: translateY(-2px);
     }
-    .calculate-button { background-color: #1e90ff; }
-    .save-button { background-color: #4caf50; }
-    .clear-button { background-color: #d9534f; }
-    .export-button { background-color: #ffa500; }
+    .time-button {
+      background-color: #87CEFA;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    }
+    .zero-button {
+      background-color: #d9534f;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    }
+    .calculate-button {
+      background-color: #1e90ff;
+    }
+    .save-button {
+      background-color: #4caf50;
+    }
+    .clear-button {
+      background-color: #d9534f;
+    }
 
-    /* Conteneur de résultats compact */
+    /* Conteneur des résultats */
     .results-container {
       width: 100%;
-      padding: 10px;
+      padding: 5px;
       background-color: #3a3a3a;
-      border-radius: 4px;
+      border-radius: 6px;
       margin-top: 10px;
       text-align: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
     }
     .results-container h3 {
       font-size: 1.1em;
-      margin: 5px 0;
-      color: #3a3a3a;
+      margin-bottom: 6px;
+      color: #ffffff;
     }
-
-    /* Style des éléments de résultats */
     .result-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.95em;
-      padding: 6px;
+      font-size: 1em;
+      padding: 5px;
+      margin: 6px 6px;
       background-color: #2b2b2b;
-      border-radius: 4px;
-      margin: 3px 0;
+      border-radius: 5px;
       color: #e0e0e0;
-    }
-    .result-item .result-text {
-      display: flex;
-      align-items: center;
-    }
-    .result-item .result-text i {
-      margin-right: 8px;
     }
     .result-item span {
       font-weight: bold;
-      color: #80cbc4;
+      color: #87CEFA;
     }
-
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
 </head>
@@ -158,8 +186,7 @@
 <div class="main-container">
   <!-- Sélection du jour -->
   <div class="calendar-container">
-    <label for="selectedDate">DATE DU JOUR:</label>
-    <input type="date" id="selectedDate" onchange="loadDataForDate()">
+    <h3>DATE DU JOUR:</h3> <input type="date" id="selectedDate" onchange="loadDataForDate()">
   </div>
 
   <!-- Bureau matin -->
@@ -227,18 +254,17 @@
     <button class="calculate-button" onclick="displayResults()">Calculer</button>
     <button class="save-button" onclick="saveDataForDate()">Sauver</button>
     <button class="clear-button" onclick="clearInputs()">Effacer</button>
-    <button class="export-button" onclick="exportToExcel()">Exporter</button>
 
     <div class="result-item" id="resultTrajetMatin">
-      <div class="result-text"><i class="result-icon">🚗</i> Trajet matin (A Saisir dans ADP):</div>
+      <div class="result-text"><i class="result-icon">🚗</i> Trajet matin (A Saisir):</div>
       <span>-</span>
     </div>
     <div class="result-item" id="resultTrajetSoir">
-      <div class="result-text"><i class="result-icon">🚗</i> Trajet soir (A Saisir dans ADP):</div>
+      <div class="result-text"><i class="result-icon">🚗</i> Trajet soir (A Saisir):</div>
       <span>-</span>
     </div>
     <div class="result-item" id="resultTempsTravail">
-      <div class="result-text"><i class="result-icon">💼</i> Temps Travail (A Saisir dans ADP):</div>
+      <div class="result-text"><i class="result-icon">💼</i> Temps Travail (A Saisir):</div>
       <span>-</span>
     </div>
   </div>
@@ -254,7 +280,9 @@
     function calculateElapsed(start, stop) {
       const startMinutes = parseTimeToMinutes(start);
       const stopMinutes = parseTimeToMinutes(stop);
-      return stopMinutes >= startMinutes ? stopMinutes - startMinutes : stopMinutes - startMinutes + 1440;
+      return stopMinutes >= startMinutes
+        ? stopMinutes - startMinutes
+        : stopMinutes - startMinutes + 1440;
     }
 
     function displayResults() {
@@ -279,33 +307,33 @@
         document.getElementById("pauseMidiStopTime").value
       );
 
-      // Calcul de l'écart entre la fin du trajet matin et le début du trajet soir
       const intervalTrajetMatinSoir = calculateElapsed(
         document.getElementById("trajetMatinStopTime").value,
         document.getElementById("trajetSoirStartTime").value
       );
 
-      // Calcul du Temps de Travail
       const travailTotal = bureauMatin + bureauSoir - pauseMidi + intervalTrajetMatinSoir;
 
-      // Mise à jour de l'affichage des résultats
-      document.getElementById("resultTrajetMatin").querySelector("span").textContent = `${Math.floor(trajetMatin / 60)}h${trajetMatin % 60}m`;
-      document.getElementById("resultTrajetSoir").querySelector("span").textContent = `${Math.floor(trajetSoir / 60)}h${trajetSoir % 60}m`;
-      document.getElementById("resultTempsTravail").querySelector("span").textContent = `${Math.floor(travailTotal / 60)}h${travailTotal % 60}m`;
+      document.getElementById("resultTrajetMatin").querySelector("span").textContent =
+        `${Math.floor(trajetMatin / 60)}h${trajetMatin % 60}m`;
+      document.getElementById("resultTrajetSoir").querySelector("span").textContent =
+        `${Math.floor(trajetSoir / 60)}h${trajetSoir % 60}m`;
+      document.getElementById("resultTempsTravail").querySelector("span").textContent =
+        `${Math.floor(travailTotal / 60)}h${travailTotal % 60}m`;
     }
 
     function setCurrentTime(inputId) {
       const now = new Date();
       const formattedTime = now.toLocaleTimeString("fr-FR", {
         hour: "2-digit",
-        minute: "2-digit"
+        minute: "2-digit",
       });
       document.getElementById(inputId).value = formattedTime;
     }
 
     function clearInputs() {
-      document.querySelectorAll("input[type='text']").forEach(input => input.value = "");
-      document.querySelectorAll(".result-item span").forEach(span => span.textContent = "-");
+      document.querySelectorAll("input[type='text']").forEach((input) => (input.value = ""));
+      document.querySelectorAll(".result-item span").forEach((span) => (span.textContent = "-"));
     }
 
     function setZeroTime(startId, endId) {
@@ -356,33 +384,20 @@
         document.getElementById("trajetSoirStopTime").value = data.trajetSoirStop || "";
         document.getElementById("bureauSoirStartTime").value = data.bureauSoirStart || "";
         document.getElementById("bureauSoirStopTime").value = data.bureauSoirStop || "";
-        document.getElementById("resultTrajetMatin").querySelector("span").textContent = data.resultTrajetMatin || "-";
-        document.getElementById("resultTrajetSoir").querySelector("span").textContent = data.resultTrajetSoir || "-";
-        document.getElementById("resultTempsTravail").querySelector("span").textContent = data.resultTempsTravail || "-";
+        document.getElementById("resultTrajetMatin").querySelector("span").textContent =
+          data.resultTrajetMatin || "-";
+        document.getElementById("resultTrajetSoir").querySelector("span").textContent =
+          data.resultTrajetSoir || "-";
+        document.getElementById("resultTempsTravail").querySelector("span").textContent =
+          data.resultTempsTravail || "-";
       } else {
         clearInputs();
       }
     }
-
-    function exportToExcel() {
-    const data = [];
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key.startsWith("data-")) {
-        const record = JSON.parse(localStorage.getItem(key));
-        data.push({ Date: key.replace("data-", ""), ...record });
-      }
-    }
-    if (!data.length) {
-      alert("Aucune donnée disponible pour l'exportation.");
-      return;
-    }
-    const wb = XLSX.utils.book_new();
-    const ws = XLSX.utils.json_to_sheet(data);
-    XLSX.utils.book_append_sheet(wb, ws, "Données");
-    XLSX.writeFile(wb, "heures_travail.xlsx");
-  }
   </script>
+  <div style="margin-top: 4px; text-align: center;">
+    <a href="https://stephanemed.github.io/PoliConf/" style="color: #87CEFA; text-decoration: none;">Politique de confidentialité</a>
+  </div>
 </div>
 </body>
 </html>
