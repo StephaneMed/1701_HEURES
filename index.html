@@ -77,7 +77,7 @@
     .task-container {
       width: 100%;
       margin: 2px 0;
-      padding: 10px;
+      padding: 3px;
       background-color: #2b2b2b;
       border-radius: 6px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
@@ -203,7 +203,7 @@
 
   <!-- Trajet matin -->
   <div class="task-container required-task">
-    <h3>Premier Trajet matin (Requis)</h3>
+    <h3>Premier Trajet</h3>
     <div class="flex-container">
       <button class="time-button" onclick="setCurrentTime('trajetMatinStartTime')">Début</button>
       <input type="text" id="trajetMatinStartTime" placeholder="hh:mm">
@@ -227,7 +227,7 @@
 
   <!-- Trajet soir -->
   <div class="task-container required-task">
-    <h3>Dernier Trajet soir (Requis)</h3>
+    <h3>Dernier Trajet</h3>
     <div class="flex-container">
       <button class="time-button" onclick="setCurrentTime('trajetSoirStartTime')">Début</button>
       <input type="text" id="trajetSoirStartTime" placeholder="hh:mm">
@@ -249,22 +249,26 @@
     </div>
   </div>
 
-  <!-- Conteneur de résultats -->
-  <div class="results-container" id="resultsContainer">
+  <div style="width: 100%; text-align: center; margin: 10px 0;">
     <button class="calculate-button" onclick="displayResults()">Calculer</button>
     <button class="save-button" onclick="saveDataForDate()">Sauver</button>
     <button class="clear-button" onclick="clearInputs()">Effacer</button>
+  </div>
+
+  <!-- Conteneur de résultats -->
+  <div class="results-container" id="resultsContainer">
+    <h3 style="margin-top: 0px; margin-bottom: 5px; color: #87CEFA; font-weight: bold;">A SAISIR DANS ADP:</h3>
 
     <div class="result-item" id="resultTrajetMatin">
-      <div class="result-text"><i class="result-icon">🚗</i> Trajet matin (A Saisir):</div>
+      <div class="result-text"><i class="result-icon">🚗</i> Trajet matin:</div>
       <span>-</span>
     </div>
     <div class="result-item" id="resultTrajetSoir">
-      <div class="result-text"><i class="result-icon">🚗</i> Trajet soir (A Saisir):</div>
+      <div class="result-text"><i class="result-icon">🚗</i> Trajet soir:</div>
       <span>-</span>
     </div>
     <div class="result-item" id="resultTempsTravail">
-      <div class="result-text"><i class="result-icon">💼</i> Temps Travail (A Saisir):</div>
+      <div class="result-text"><i class="result-icon">💼</i> Temps Travail:</div>
       <span>-</span>
     </div>
   </div>
@@ -395,7 +399,7 @@
       }
     }
   </script>
-  <div style="margin-top: 4px; text-align: center;">
+  <div style="margin-top: 10px; text-align: center;">
     <a href="https://stephanemed.github.io/PoliConf/" style="color: #87CEFA; text-decoration: none;">Politique de confidentialité</a>
   </div>
 </div>
