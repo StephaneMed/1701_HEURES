@@ -4,9 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=0.8">
   <title>1701_HEURES</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
   <style>
-    /* Mode sombre compact et centré */
+  
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -14,7 +13,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      background-color: #121212; /* Fond sombre uniforme */
+      background-color: #121212; 
       color: #e0e0e0;
     }
 
@@ -32,17 +31,16 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      background-color: #1c1c1c; /* Fond légèrement plus clair */
+      background-color: #1c1c1c; 
       padding: 20px;
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     }
 
-/* Sélection de la date */
     .calendar-container {
       width: 100%;
-      display: flex; /*  Permet d'aligner le texte et le sélecteur  */
-      align-items: center; /*  Aligne verticalement les éléments  */
+      display: flex; 
+      align-items: center; 
       margin: 8px 0;
       padding: 10px;
       background-color: #2b2b2b;
@@ -55,11 +53,11 @@
       text-transform: uppercase;
       border-bottom: 2px solid #87CEFA;
       padding-bottom: 6px;
-      margin: 0; /*  Supprime les marges par défaut  */
-      margin-right: 10px; /*  Ajoute une marge à droite  */
+      margin: 0; 
+      margin-right: 10px; 
     }
     .calendar-container input {
-      width: auto; /*  Le sélecteur prend la largeur nécessaire  */
+      width: auto; 
       padding: 8px;
       background-color: #333;
       color: #e0e0e0;
@@ -73,7 +71,6 @@
       outline: none;
     }
 
-    /* Conteneur de chaque tâche */
     .task-container {
       width: 100%;
       margin: 2px 0;
@@ -83,11 +80,11 @@
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
     }
     .required-task {
-      background-color: #3a3a3a; /* Fond pour les tâches requises */
+      background-color: #3a3a3a;
     }
     .task-container h3 {
       font-size: 1.2em;
-      margin-top: 4px; /*  Marge supérieure réduite  */
+      margin-top: 4px;
       margin-bottom: 4px;
       color: #ffffff;
       text-align: center;
@@ -96,7 +93,6 @@
       padding-bottom: 3px;
     }
 
-    /* Champs de saisie et boutons alignés */
     .flex-container {
       display: flex;
       justify-content: space-between;
@@ -149,7 +145,6 @@
       background-color: #d9534f;
     }
 
-    /* Conteneur des résultats */
     .results-container {
       width: 100%;
       padding: 5px;
@@ -180,16 +175,13 @@
       color: #87CEFA;
     }
   </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
 </head>
 <body>
 <div class="main-container">
-  <!-- Sélection du jour -->
   <div class="calendar-container">
     <h3>DATE DU JOUR:</h3> <input type="date" id="selectedDate" onchange="loadDataForDate()">
   </div>
 
-  <!-- Bureau matin -->
   <div class="task-container">
     <h3>Bureau matin</h3>
     <div class="flex-container">
@@ -201,7 +193,6 @@
     </div>
   </div>
 
-  <!-- Trajet matin -->
   <div class="task-container required-task">
     <h3>Premier Trajet</h3>
     <div class="flex-container">
@@ -213,7 +204,6 @@
     </div>
   </div>
 
-  <!-- Pause midi -->
   <div class="task-container">
     <h3>Pause midi</h3>
     <div class="flex-container">
@@ -225,7 +215,6 @@
     </div>
   </div>
 
-  <!-- Trajet soir -->
   <div class="task-container required-task">
     <h3>Dernier Trajet</h3>
     <div class="flex-container">
@@ -237,7 +226,6 @@
     </div>
   </div>
 
-  <!-- Bureau soir -->
   <div class="task-container">
     <h3>Bureau soir</h3>
     <div class="flex-container">
@@ -255,7 +243,6 @@
     <button class="clear-button" onclick="clearInputs()">Effacer</button>
   </div>
 
-  <!-- Conteneur de résultats -->
   <div class="results-container" id="resultsContainer">
     <h3 style="margin-top: 0px; margin-bottom: 5px; color: #87CEFA; font-weight: bold;">A SAISIR DANS ADP:</h3>
 
@@ -273,7 +260,6 @@
     </div>
   </div>
 
-  <!-- Script JavaScript pour gérer le chronomètre, le stockage et la date -->
   <script>
     function parseTimeToMinutes(time) {
       if (!time) return 0;
